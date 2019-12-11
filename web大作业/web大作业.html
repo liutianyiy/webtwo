@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>轮播图</title>
+	<style>
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		ul,li{
+			list-style: none;
+		}
+		.box{
+			width: 1200px;
+			height: 385px;
+			border: 1px solid white;
+			margin: 10px auto;
+			position: relative;
+			overflow: hidden;
+		}
+		.slides{
+			width: 8400px;
+			position: absolute;
+			left: -1200px;
+		}
+		.slide{
+			width: 1200px;
+			overflow: hidden;
+			float: left;
+		}
+		.box>span{
+			display: block;
+			width: 30px;
+			height: 50px;
+			text-align: center;
+			cursor: pointer;
+			color: ;
+			top: 175px;
+			line-height: 50px;
+			background:rgb(255,0,0);
+			font-size: 30px;
+			position: absolute;
+			opacity: 0; 
+		}
+		#left{
+			left: 30px;
+		}
+		#right{
+			right: 30px;
+		}
+		.nav{
+			position: absolute;
+			left: 500px;
+			bottom: 20px;
+		}
+		.nav>li{
+			text-align:center ;
+			float: left;
+			width: 20px;
+			height: 20px;
+			background: #ccc;
+			cursor: pointer;
+			margin: 0 10px;
+			border-radius: 50%;
+		}
+		.nav .active{
+			background: red;
+			color: white;
+		}
+		.wenzi{
+			height: 15px;
+			background-color: #ccc;
+		}
+		.wenzi1{
+			width: 1200px;
+			margin: 0 auto;
+			height: 15px;
+		}
+		.yinxiang{
+			float: left;
+			margin-left: 220px;
+		}
+		.tixing{
+			height: 15px;
+			width: 950px;
+			float: right;
+			overflow: hidden;
+			display: inline-block;
+		}
+		.tixing1{
+			height: 15px;
+			display: inline-block;
+			color: red;
+			font-size: 10px;
+			float: right;
+			position: relative;
+			right: -100px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wenzi" id="wenzi">
+		<div class="wenzi1">
+			<span class="yinxiang"><img src="images/a15.png" alt=""></span>
+			<div class="tixing" id="tixing">
+				<p class="tixing1" id="tixing1">[温馨提示]最近有不少不法分子在网上骗人，请大家注意！！！</p>
+			</div>
+		</div>
+	</div>
+	<div class="box" id="box">
+		<div class="slides" id="slides">
+			<div class="slide"><img src="images/b5.png" alt=""></div>
+			<div class="slide"><img src="images/b1.png" alt=""></div>
+			<div class="slide"><img src="images/b2.png" alt=""></div>
+			<div class="slide"><img src="images/b3.png" alt=""></div>
+			<div class="slide"><img src="images/b4.png" alt=""></div>
+			<div class="slide"><img src="images/b5.png" alt=""></div>
+			<div class="slide"><img src="images/b1.png" alt=""></div>
+		</div>
+		<span id="left"><</span>
+		<span id="right">></span>
+		<ul class="nav" id="nav">
+			<li class="active">1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+	</div>
+</body>
+<script src="animate.js"></script>
+<script>
+	var box=document.getElementById("box");
+	var oNavlist=document.getElementById(
+		"nav").children;
+	var slides=document.getElementById("slides");
+	var left=document.getElementById("left");
+	var right=document.getElementById("right");
+	var index=1;
+	var timer;
+	var isMoving=false;
+
+	function next(){
+		if(isMoving){
+			return;
+		}
+		isMoving=true;
+		index++;
+		navChange();
+		animate(slides,{left:-1200*index},function(){
+			if(index>5 ){
+				slides.style.left="-1200px";
+				index=1;
+			}
+			isMoving=false;
+		});
+	}
+	function prev(){
+		if(isMoving){
+			return;
+		}
+		isMoving=true;
+		index--;
+		navChange();
+		animate(slides,{left:-1200*index},function(){
+			if(index===0){
+				slides.style.left="-6000px";
+				index=5;
+			}
+			isMoving=false;
+		});
+	}
+	var timer=setInterval(next,2000);
+	//鼠标覆盖
+	box.onmouseover=function(){
+		animate(left,{opacity:50});
+		animate(right,{opacity:50});
+		clearInterval(timer);
+	}
+	//鼠标离开
+	box.onmouseout=function(){
+		animate(left,{opacity:0});
+		animate(right,{opacity:0});
+		timer=setInterval(next,2000);
+	}
+	right.onclick=next;
+	left.onclick=prev;
+	//小按钮点击
+	for(var i=0;i<oNavlist.length;i++){
+		oNavlist[i].idx=i;
+		oNavlist[i].onclick=function(){
+			index=this.idx+1;
+			navChange();
+			animate(slides,{left:-1200*index});
+		}
+	}
+	//小按钮换色
+	function navChange(){
+		for(var i=0;i<oNavlist.length;i++){
+			oNavlist[i].className="";
+		}
+		if(index>5){
+			oNavlist[0].className="active";
+		}
+		else if(index===0){
+			oNavlist[4].className="active";
+		}
+		else{
+			oNavlist[index-1].className="active";
+		}
+	}
+	document.body.onload=function(){
+		var timer1=setInterval(function(){
+			var now=parseInt(getStyle(tixing1,"right"));
+			if(now==950){
+				now=0;
+				tixing1.style.right=now+-100+"px";
+			}
+			else{
+				tixing1.style.right=now+1+"px";
+			}
+		},15)
+	}
+</script>
+</html>
